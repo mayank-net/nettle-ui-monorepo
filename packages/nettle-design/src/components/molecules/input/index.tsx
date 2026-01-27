@@ -57,24 +57,11 @@ const StyledInput = styled.input<{
   padding-right: 8px;
 `;
 
-const StyledGradientBackground = styled(FlexBox)<{ themeMode: ThemeMode }>`
-  flex: 1;
-  border: 1px solid transparent;
-  background-image: linear-gradient(
-      ${(props) => themeGet(`colors.surface.${props.themeMode}.surface3`)},
-      ${(props) => themeGet(`colors.surface.${props.themeMode}.surface3`)}
-    ),
-    linear-gradient(89.7deg, #635c1d 0.14%, #1d1293 100%);
-  background-origin: border-box;
-  background-clip: content-box, border-box;
-  border-radius: 10px;
-`;
-
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   placeholderText: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  variant?: "default" | "gradient";
+  variant?: "default";
   backgroundColor?: keyof SurfaceColors;
   label?: string;
   isError?: boolean;
@@ -91,7 +78,7 @@ function Input({
   onChange,
   label,
   variant = "default",
-  backgroundColor = "surface3",
+  backgroundColor = "surface4",
   isError = false,
   errorText = "",
   sizeVariant = "md",
@@ -103,31 +90,6 @@ function Input({
   const [themeMode] = useThemeMode();
   const [isFocused, setIsFocused] = useState(false);
 
-  if (variant === "gradient") {
-    return (
-      <StyledGradientBackground themeMode={themeMode}>
-        <StyledInputContainer
-          sizeVariant={sizeVariant}
-          themeMode={themeMode}
-          isError={isError}
-          backgroundColor={backgroundColor}
-          paddingRight={icon ? "0px" : "12px"}
-          isFocused={isFocused}
-        >
-          <StyledInput
-            themeMode={themeMode}
-            sizeVariant={sizeVariant}
-            onChange={onChange}
-            value={value}
-            placeholder={placeholderText}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            {...rest}
-          />
-        </StyledInputContainer>
-      </StyledGradientBackground>
-    );
-  }
   return (
     <FlexBox flex={1} flexDirection={"column"}>
       {label && (

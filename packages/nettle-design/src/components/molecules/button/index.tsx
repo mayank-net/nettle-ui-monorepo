@@ -26,29 +26,18 @@ const StyledGradientContainer = styled(FlexBox)<{ textColorInverted: boolean }>`
   cursor: pointer;
   flex: 1;
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-
-  /* 1. THE BASE: Deep Blue */
   background: linear-gradient(180deg, #5469fa 0%, #1a3893 100%);
   color: ${(props) => (props.textColorInverted ? "#000000" : "#ffffff")};
-
-  /* 2. THE BORDER: A 1px semi-transparent stroke */
-  /* We use border-box so the border doesn't change the button size */
   border: 1px solid rgba(255, 255, 255, 0.15);
-
-  /* 3. DEPTH: Dual shadow system */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2),
-    /* External drop shadow */ inset 0 1px 0 rgba(255, 255, 255, 0.2); /* Inner top "highlight" */
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 
   &:hover {
     transform: translateY(-2px);
-
-    /* Brighten the border on hover to look like a "glow" */
-    border-color: rgba(218, 185, 154, 0.4); /* Subtle hint of your brown/gold */
-
+    border-color: rgba(218, 185, 154, 0.4);
     background: linear-gradient(180deg, #6274ff 0%, #1a3893 100%);
-
     box-shadow: 0 12px 20px rgba(26, 56, 147, 0.3),
-      /* Deep blue glow */ inset 0 1px 0 rgba(255, 255, 255, 0.4); /* Sharper inner highlight */
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
   }
 
   &:active {
@@ -56,6 +45,7 @@ const StyledGradientContainer = styled(FlexBox)<{ textColorInverted: boolean }>`
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   }
 `;
+
 const StyledPrimaryContainer = styled(FlexBox)<{
   background: string;
   size?: "sm" | "md" | "lg";
@@ -130,9 +120,22 @@ function Button({
           textColorInverted={textColorInverted}
           onClick={onClick}
         >
-          <Text fontSize={1} fontWeight={textVariant}>
-            {label}
-          </Text>
+          <FlexBox
+            alignItems={"center"}
+            flexDirection={iconPlacement === "left" ? "row" : "row-reverse"}
+          >
+            {icon && (
+              <FlexBox
+                mr={label ? (iconPlacement === "left" ? 1 : 0) : 0}
+                ml={label ? (iconPlacement === "left" ? 0 : 1) : 0}
+              >
+                {icon}
+              </FlexBox>
+            )}
+            <Text fontSize={1} fontWeight={textVariant}>
+              {label}
+            </Text>
+          </FlexBox>
         </StyledGradientContainer>
       );
     }

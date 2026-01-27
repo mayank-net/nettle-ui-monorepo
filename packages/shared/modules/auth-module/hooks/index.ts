@@ -6,11 +6,11 @@ import {
   signInWithEmailAndPassword,
   signInWithEmailLink,
   confirmPasswordReset,
+  sendPasswordResetEmail,
+  sendSignInLinkToEmail,
 } from "firebase/auth";
 import { FirebaseAuthInstance } from "shared/modules/auth-module/firebase-auth"; // Firebase instance
 import { useAuth } from "../index";
-import { useAuthMagicLinkSend } from "./magic-link";
-import { useForgotPasswordSendEmail } from "./forgot-password";
 
 export const ERROR_CODE_MAP: { [key: string]: string } = {
   "auth/invalid-email": "Incorrect email or password",
@@ -45,46 +45,12 @@ export function useFirebaseLogin(authenticateCallback?: (arg: string) => void) {
   const [isLoginLoading, setIsLoginLoading] = useState(false);
   const [isForgotPasswordEmailSent, setIsForgotPasswordEmailSent] =
     useState(false);
-
+  const [
+    isForgotPasswordSendEmailLoading,
+    setIsForgotPasswordSendEmailLoading,
+  ] = useState(false);
+  const [isMagicLinkSendLoading, setIsMagicLinkSendLoading] = useState(false);
   const [isSignupLoading, setIsSignupLoading] = useState(false);
-
-  const magicLinkSendCallback = (
-    message: string,
-    type: "success" | "error"
-  ) => {
-    if (type === "success") {
-      setIsMagicLinkSent(true);
-    } else {
-      setSignInErrorState({
-        isError: true,
-        type: "magic_link",
-        message,
-      });
-    }
-  };
-
-  const forgotPasswordEmailSendCallback = (
-    message: string,
-    type: "success" | "error"
-  ) => {
-    if (type === "success") {
-      setIsForgotPasswordEmailSent(true);
-    } else {
-      setSignInErrorState({
-        isError: true,
-        type: "forgot_password",
-        message,
-      });
-    }
-  };
-
-  const { handleSendMagicLink, isLoading: isMagicLinkSendLoading } =
-    useAuthMagicLinkSend(magicLinkSendCallback);
-
-  const {
-    handleForgotPasswordSendEmail,
-    isLoading: isForgotPasswordSendEmailLoading,
-  } = useForgotPasswordSendEmail(forgotPasswordEmailSendCallback);
 
   const resetErrorState = () => {
     if (signInErrorState !== null) {
@@ -181,14 +147,12 @@ export function useFirebaseLogin(authenticateCallback?: (arg: string) => void) {
     callback: (arg: string) => void
   ) => {
     try {
-      const result = await signInWithEmailLink(
+      await signInWithEmailLink(
         FirebaseAuthInstance,
         email,
         window.location.href
       );
-      if (result?.user) {
-        setIsLoggedIn(true);
-      }
+      authenticateCallback && authenticateCallback("success");
     } catch (error) {
       console.error("Magic link error:", error);
       callback("");
@@ -219,12 +183,42 @@ export function useFirebaseLogin(authenticateCallback?: (arg: string) => void) {
     }
   };
 
-  const handleMagicLink = ({ email }: { email: string }) => {
-    handleSendMagicLink({ email });
+  const handleMagicLink = async ({ email }: { email: string }) => {
+    setIsMagicLinkSendLoading(true);
+    try {
+      await sendSignInLinkToEmail(FirebaseAuthInstance, email, {
+        url: `${window.location.origin}/magic_link`,
+        handleCodeInApp: true,
+      });
+      window.localStorage.setItem("emailForSignIn", email);
+      setIsMagicLinkSent(true);
+    } catch (error) {
+      const code = error?.code;
+      setSignInErrorState({
+        isError: true,
+        type: "magic_link",
+        message: ERROR_CODE_MAP[code] || "Something went wrong",
+      });
+    }
+    setIsMagicLinkSendLoading(false);
   };
 
-  const handleForgotPasswordLink = ({ email }: { email: string }) => {
-    handleForgotPasswordSendEmail({ email });
+  const handleForgotPasswordLink = async ({ email }: { email: string }) => {
+    setIsForgotPasswordSendEmailLoading(true);
+    try {
+      await sendPasswordResetEmail(FirebaseAuthInstance, email, {
+        url: window.location.href,
+      });
+      setIsForgotPasswordEmailSent(true);
+    } catch (error) {
+      const code = error?.code;
+      setSignInErrorState({
+        isError: true,
+        type: "forgot_password",
+        message: ERROR_CODE_MAP[code] || "Something went wrong",
+      });
+    }
+    setIsForgotPasswordSendEmailLoading(false);
   };
 
   const handlePasswordReset = ({

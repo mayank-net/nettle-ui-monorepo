@@ -6,11 +6,16 @@ import { FlexBox, Text, View } from "nettle-design/src";
 import styled from "styled-components";
 import NettleLogo from "../../components/svg-logo";
 import { getInitials } from "../../utils/get-initials";
+import { useMediaQuery } from "shared/global-state/hooks/media-query";
 
 const StyledNavbar = styled(FlexBox)`
-  padding: 16px 16px;
-  width: calc(100vw - 32px);
+  padding: 16px;
+  width: 100%;
+  box-sizing: border-box;
   border-bottom: 1px solid #d3a353;
+  @media (max-width: 600px) {
+    padding: 12px;
+  }
 `;
 
 const StyledGradientBackground = styled(FlexBox)`
@@ -51,22 +56,6 @@ const StyledGradientBackground = styled(FlexBox)`
     opacity: 0.3;
     mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
   }
-
-  &:after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    opacity: 0.04;
-    filter: brightness(0.5) contrast(150%);
-  }
-
-  @media (max-width: 1100px) {
-    display: none;
-  }
 `;
 
 const NameIcon = styled(FlexBox)`
@@ -77,10 +66,31 @@ const NameIcon = styled(FlexBox)`
   align-items: center;
   border-radius: 16px;
   color: #ffffff;
+  flex-shrink: 0;
+`;
+
+const UserInfo = styled(FlexBox)`
+  @media (max-width: 480px) {
+    display: none;
+  }
+`;
+
+const ResponsiveText = styled(Text)<{
+  mobileSize?: number;
+  desktopSize?: number;
+}>`
+  font-size: ${(props) => props.desktopSize}px;
+
+  @media (max-width: 768px) {
+    font-size: ${(props) => props.mobileSize}px;
+    text-align: center;
+  }
 `;
 
 function Dashboard() {
   const [user, setUser] = useState<User | null>(null);
+
+  const isMobile = useMediaQuery();
 
   const displayName = user?.displayName || "User";
 
@@ -111,24 +121,24 @@ function Dashboard() {
                 {initials}
               </Text>
             </NameIcon>
-            <FlexBox flexDirection={"column"}>
+            <UserInfo flexDirection={"column"}>
               <Text fontSize={1} color={"text1"} fontWeight={"bold"}>
                 {displayName}
               </Text>
               <Text fontSize={0} color={"text2"}>
                 {user?.email}
               </Text>
-            </FlexBox>
+            </UserInfo>
           </FlexBox>
         </StyledNavbar>
 
         <FlexBox
-          p={4}
+          p={3}
           alignSelf={"flex-end"}
           style={{ cursor: "pointer" }}
           onClick={handleLogout}
         >
-          <Text fontSize={0} color={"text1"}>
+          <Text fontSize={0} color={"text1"} style={{ opacity: 0.7 }}>
             Logout
           </Text>
         </FlexBox>
@@ -138,16 +148,27 @@ function Dashboard() {
           alignItems={"center"}
           justifyContent={"center"}
           flex={1}
+          p={3}
         >
-          <FlexBox>
-            <Text fontSize={8} color={"text1"} fontWeight={"bold"}>
-              Hello, {displayName}
-            </Text>
+          <FlexBox mb={isMobile ? 4 : 8}>
+            <ResponsiveText
+              desktopSize={48}
+              mobileSize={32}
+              color={"text1"}
+              fontWeight={"bold"}
+            >
+              Hello, {displayName.split(" ")[0]}
+            </ResponsiveText>
           </FlexBox>
           <FlexBox>
-            <Text fontSize={8} color={"text1"} fontWeight={"bold"}>
+            <ResponsiveText
+              desktopSize={48}
+              mobileSize={32}
+              color={"text1"}
+              fontWeight={"bold"}
+            >
               Welcome to Nettle
-            </Text>
+            </ResponsiveText>
           </FlexBox>
         </FlexBox>
       </StyledGradientBackground>

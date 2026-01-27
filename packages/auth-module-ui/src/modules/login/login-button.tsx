@@ -31,7 +31,7 @@ export function GoogleLoginButton({
     <Button
       label="Continue with Google"
       onClick={handleGoogleLogin}
-      background="#001F3E"
+      background="#1A3893"
       icon={
         <img
           src={GoogleLogo}
@@ -57,7 +57,7 @@ export function MagicLinkLoginButton({
     <Button
       label="Login with Magic Link"
       onClick={handleMagicLink}
-      background="#001F3E"
+      background="#1A3893"
       icon={
         <MagicWand
           size={18}
@@ -81,7 +81,7 @@ export function LoginEmailPasswordButton({
     <Button
       label="Login with password"
       onClick={handleLoginEmailPassword}
-      background="#001F3E"
+      background="#1A3893"
       iconPlacement="left"
       icon={
         <FlexBox mr={2}>
@@ -274,7 +274,7 @@ export function LinkSentButton({
         <Button
           label={isLoading ? "Sending link..." : "Send link again"}
           onClick={resend}
-          background="#001F3E"
+          background="#1A3893"
           icon={<Link size={18} color="#ffffff" />}
         />
       </FlexBox>

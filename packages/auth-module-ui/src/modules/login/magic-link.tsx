@@ -1,77 +1,86 @@
 import React, { useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
 import { useFirebaseLogin } from "shared/modules/auth-module/hooks";
 import { FlexBox, Spinner, Text, View } from "nettle-design/src";
 import styled from "styled-components";
-import NettleLogoDark from "theme/assets/images/nettle-logo-rect-dark.png";
+import NettleLogo from "../../components/svg-logo";
 
 const StyledGradientBackground = styled(FlexBox)`
   width: 100vw;
   height: 100dvh;
-  background: radial-gradient(
-      circle at 40% 98%,
-      rgba(255, 230, 0, 0.2),
-      transparent 30%
-    ),
-    radial-gradient(circle at 60% 98%, rgba(29, 18, 147, 0.35), transparent 30%);
-
   position: relative;
   overflow: hidden;
+  background-color: #020408;
 
-  &:before,
+  background-image: radial-gradient(
+      circle at 80% 20%,
+      rgba(84, 105, 250, 0.25) 0%,
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 20% 80%,
+      rgba(175, 99, 30, 0.3) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at center,
+      rgba(26, 56, 147, 0.15) 0%,
+      transparent 70%
+    );
+
+  &:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background-image: radial-gradient(#af631e 1.5px, transparent 1.5px),
+      radial-gradient(rgba(175, 99, 30, 0.4) 2px, transparent 2px);
+    background-size: 20px 20px;
+    background-position: center center;
+    opacity: 0.3;
+    mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
+  }
+
   &:after {
     content: "";
     position: absolute;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100dvh;
+    width: 100%;
+    height: 100%;
     pointer-events: none;
-    background: transparent;
+    opacity: 0.04;
+    filter: brightness(0.5) contrast(150%);
   }
 
-  &:before {
-    background-image: radial-gradient(
-      circle,
-      rgba(255, 255, 255, 1) 1px,
-      transparent 1.5px
-    );
-    background-size: 600px 350px;
-    opacity: 0.6;
-  }
-  &:after {
-    background-image: radial-gradient(
-      circle,
-      rgba(255, 255, 255, 1) 1px,
-      transparent 1.5px
-    );
-    background-size: 450px 700px;
-    opacity: 0.6;
+  @media (max-width: 1100px) {
+    display: none;
   }
 `;
 
 function MagicLinkPage(): JSX.Element {
-  const [searchParams] = useSearchParams();
-
   const magicLinkErrorCallback = () => {
+    window.localStorage.removeItem("emailForSignIn");
     window.location.href = "/login";
   };
 
   const loginSuccessCallback = () => {
-    window.location.reload();
+    window.localStorage.removeItem("emailForSignIn");
+    window.location.href = "/dashboard";
   };
 
   const { signInWithMagicLinkHandler } = useFirebaseLogin(loginSuccessCallback);
 
   const handleSignIn = async () => {
-    const queryParams = new URLSearchParams(searchParams);
-    const email = queryParams.get("email") || "";
+    const email = localStorage.getItem("emailForSignIn") || "";
     await signInWithMagicLinkHandler(email, magicLinkErrorCallback);
   };
 
   useEffect(() => {
     handleSignIn();
-  }, [JSON.stringify(searchParams)]);
+  }, []);
 
   return (
     <View position="fixed">
@@ -80,33 +89,24 @@ function MagicLinkPage(): JSX.Element {
           <FlexBox
             alignItems={"center"}
             flexDirection={"column"}
-            width={"400px"}
+            width={"420px"}
           >
             <FlexBox>
               <Spinner
-                size={42}
-                color={"#00BC62"}
-                spinColor={"#3B3B47"}
-                borderSize={6}
+                size={32}
+                color={"#AF631E"}
+                spinColor={"rgba(255, 255, 255, 0.05)"}
+                borderSize={4}
               />
             </FlexBox>
-            <FlexBox mt={5} alignItems={"center"} justifyContent={"center"}>
+            <FlexBox mt={6} alignItems={"center"} justifyContent={"center"}>
               <FlexBox>
-                <Text fontSize={6} fontWeight={"regular"} color={"text1"}>
-                  Welcome to
-                </Text>
-              </FlexBox>
-              <FlexBox>
-                <img
-                  src={NettleLogoDark}
-                  style={{ height: 48, marginLeft: 8 }}
-                  alt="NettleLogoDark"
-                />
+                <NettleLogo size={40} />
               </FlexBox>
             </FlexBox>
-            <FlexBox mt={5}>
+            <FlexBox mt={4}>
               <Text
-                fontSize={4}
+                fontSize={3}
                 fontWeight={"regular"}
                 color={"text2"}
                 textAlign={"center"}

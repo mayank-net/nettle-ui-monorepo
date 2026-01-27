@@ -14,7 +14,7 @@ import {
 import styled from "styled-components";
 import { toastError } from "../../../utils/custom-toast";
 
-import NettleLogoDark from "theme/assets/images/nettle-logo-rect-dark.png";
+import NettleLogo from "../../../components/svg-logo";
 
 type ScreenState =
   | "login_email_password"
@@ -29,18 +29,15 @@ const StyledErrorContainer = styled(FlexBox)`
 `;
 
 const StyledAnchorTag = styled.a`
-  color: #4c8aff;
   :hover {
     color: #4c8aff;
   }
+  text-decoration: none;
 `;
 
 const LinkText = styled(Text)`
-  color: #4c8aff;
   cursor: pointer;
-  :hover {
-    text-decoration: underline;
-  }
+  text-decoration: none;
 `;
 
 const StyledFooterContainer = styled(FlexBox)`
@@ -59,7 +56,7 @@ function MobileLoginUI() {
 
   const authenticateCallback = (arg: string) => {
     if (arg === "success") {
-      window.location.reload();
+      window.location.href = "/dashboard";
     } else {
       setLoginError(arg);
     }
@@ -71,7 +68,6 @@ function MobileLoginUI() {
     handleSignInWithEmailPassword,
     handleCreateUserWithEmailPassword,
     handleForgotPasswordLink,
-    // isLoading,
     signInErrorState,
     isMagicLinkSent,
     isForgotPasswordEmailSent,
@@ -157,8 +153,14 @@ function MobileLoginUI() {
       flexDirection={"column"}
       px={4}
     >
-      <FlexBox pt={4} mb={10}>
-        <img src={NettleLogoDark} style={{ height: 32 }} alt="NettleLogoDark" />
+      <FlexBox
+        style={{ borderBottom: "1px solid #26262e" }}
+        py={6}
+        alignItems={"center"}
+        justifyContent={"center"}
+        mb={10}
+      >
+        <NettleLogo />
       </FlexBox>
       {loginError && (
         <StyledErrorContainer mb={5}>
@@ -178,7 +180,6 @@ function MobileLoginUI() {
           <FlexBox>
             <GoogleLoginButton handleGoogleLogin={handleGoogleLogin} />
           </FlexBox>
-
           <FlexBox mt={5}>
             <MagicLinkLoginButton
               handleMagicLink={() => {
@@ -559,14 +560,23 @@ function MobileLoginUI() {
       )}
 
       <StyledFooterContainer alignItems={"center"} justifyContent={"center"}>
-        <FlexBox mr={1} mt={1}>
-          <Text fontSize={1} color={"text1"}>
-            Contact Us
-          </Text>
-        </FlexBox>
+        <StyledAnchorTag
+          target={"_blank"}
+          style={{ marginRight: "8px" }}
+          href="https://nettle.llc/terms-and-conditions"
+        >
+          <LinkText color={"text2"} fontSize={1}>
+            T&C
+          </LinkText>
+        </StyledAnchorTag>
         <FlexBox>
-          <StyledAnchorTag href="mailto:hello@nettle.llc">
-            <LinkText fontSize={1}>hello@nettle.llc</LinkText>
+          <StyledAnchorTag
+            target={"_blank"}
+            href="https://nettle.llc/privacy-policy"
+          >
+            <LinkText color={"text2"} fontSize={1}>
+              Privacy Policy
+            </LinkText>
           </StyledAnchorTag>
         </FlexBox>
       </StyledFooterContainer>
