@@ -1,5 +1,3 @@
-export const API_URL = process.env.REACT_APP_API_URL || "";
-
 /**   FIREBASE AUTH CREDENTIALS */
 export const FIREBASE_API_KEY = process.env.REACT_APP_FIREBASE_API_KEY || "";
 export const FIREBASE_AUTH_DOMAIN =
@@ -11,9 +9,3 @@ export const FIREBASE_STORAGE_BUCKET =
 export const FIREBASE_MESSAGING_SENDER_ID =
   process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID || "";
 export const FIREBASE_APP_ID = process.env.REACT_APP_FIREBASE_APP_ID || "";
-
-export const FIREBASE_REDIRECT_URL =
-  process.env.REACT_APP_FIREBASE_REDIRECT_URL || "";
-
-/** INTERCOM */
-// export const INTERCOM_APP_ID = process.env.REACT_APP_INTERCOM_APP_ID || "";

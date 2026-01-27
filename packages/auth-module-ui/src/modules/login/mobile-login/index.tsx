@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, FlexBox, Input, NettleIcon, Text } from "nettle-design/src";
 import { useFirebaseLogin } from "shared/modules/auth-module/hooks";
 import { ArrowLeft, Eye, EyeSlash } from "@phosphor-icons/react";
@@ -12,7 +12,6 @@ import {
   TitleText,
 } from "../login-button";
 import styled from "styled-components";
-import { toastError } from "../../../utils/custom-toast";
 
 import NettleLogo from "../../../components/svg-logo";
 
@@ -134,18 +133,6 @@ function MobileLoginUI() {
       handleForgotPasswordLink({ email });
     }
   };
-
-  useEffect(() => {
-    if (
-      (signInErrorState?.type === "login_with_microsoft" ||
-        signInErrorState?.type === "login_with_google") &&
-      signInErrorState.isError
-    ) {
-      toastError(
-        signInErrorState?.message || "Failed to login. Please try again."
-      );
-    }
-  }, [signInErrorState]);
 
   return (
     <FlexBox

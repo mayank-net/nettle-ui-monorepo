@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Button,
   FlexBox,
@@ -21,7 +21,6 @@ import {
 import { ArrowLeft } from "@phosphor-icons/react/dist/ssr";
 import { Eye, EyeSlash } from "@phosphor-icons/react";
 import styled from "styled-components";
-import { toastError } from "../../utils/custom-toast";
 
 type ScreenState =
   | "login_email_password"
@@ -140,18 +139,6 @@ function LoginPage(): JSX.Element {
       handleForgotPasswordLink({ email });
     }
   };
-
-  useEffect(() => {
-    if (
-      (signInErrorState?.type === "login_with_microsoft" ||
-        signInErrorState?.type === "login_with_google") &&
-      signInErrorState.isError
-    ) {
-      toastError(
-        signInErrorState?.message || "Failed to login. Please try again."
-      );
-    }
-  }, [signInErrorState]);
 
   return (
     <View position="fixed">
