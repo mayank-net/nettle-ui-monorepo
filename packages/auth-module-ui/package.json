@@ -1,0 +1,13 @@
+{
+  "name": "auth-module-ui",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "REACT_APP_BUILD_ENV=development craco start",
+    "tsc": "tsc --skipLibCheck",
+    "build:staging": "REACT_APP_BUILD_ENV=staging NODE_OPTIONS=--max-old-space-size=4096 craco build",
+    "build:dev": "REACT_APP_BUILD_ENV=development NODE_OPTIONS=--max-old-space-size=4096 craco build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  }
+}

@@ -1,0 +1,45 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior-x: none; /* Disable 2 finger back/forward gesture on Mac browsers */
+}
+
+/* Custom styling for React-Toasify */
+.custom-toast-success {
+  background-color: #1e1e24 !important;
+  border: 1px solid #00bc62;
+  border-radius: 10px !important;
+  color: #fff !important;
+  /* font-family: "DM Sans" !important; */
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 8px;
+  width: 400px;
+}
+
+.custom-toast-error {
+  background-color: #1e1e24 !important;
+  border: 1px solid #df5050;
+  border-radius: 10px !important;
+  color: #fff !important;
+  /* font-family: "DM Sans" !important; */
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 10px !important;
+  width: 400px;
+}
+
+/* Remove the spinner for WebKit browsers */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove the spinner for Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}

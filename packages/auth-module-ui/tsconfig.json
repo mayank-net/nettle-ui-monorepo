@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": [
+    "src",
+    "../shared",
+    "../theme",
+    "../nettle-design",
+    "../../typings/modules.d.ts"
+  ],
+  "exclude": ["node_modules", "**/*.js", "**/*.jsx"]
+}
