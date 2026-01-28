@@ -2,6 +2,25 @@
 
 # Technical Architecture and Design: nettle-ui-monorepo
 
+## Getting Started
+
+```
+yarn install
+
+# create a .env.development file and add following env vars
+
+# Firebase Configuration
+REACT_APP_FIREBASE_API_KEY=your_key
+REACT_APP_FIREBASE_AUTH_DOMAIN=your_app.firebaseapp.com
+REACT_APP_FIREBASE_PROJECT_ID=your_project_id
+REACT_APP_FIREBASE_STORAGE_BUCKET=your_app.appspot.com
+REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_id
+REACT_APP_FIREBASE_APP_ID=your_app_id
+
+# run locally
+yarn workspace auth-module-ui start
+```
+
 ## 1. Overview
 
 This document outlines the technical architecture and design of the `nettle-ui-monorepo`. This repository is a Yarn workspaces-based monorepo that houses several React applications and shared packages.

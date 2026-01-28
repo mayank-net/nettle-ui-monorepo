@@ -20,6 +20,7 @@ export const ERROR_CODE_MAP: { [key: string]: string } = {
   "auth/operation-not-allowed": "Something went wrong",
   "auth/account-exists-with-different-credential":
     "Failed to login. This login method is not allowed.",
+  "auth/quota-exceeded": "Exhausted daily quota for email sign-in.",
 };
 
 export interface SignInError {
@@ -193,6 +194,7 @@ export function useFirebaseLogin(authenticateCallback?: (arg: string) => void) {
       window.localStorage.setItem("emailForSignIn", email);
       setIsMagicLinkSent(true);
     } catch (error) {
+      console.log("ERROR", error?.code);
       const code = error?.code;
       setSignInErrorState({
         isError: true,
