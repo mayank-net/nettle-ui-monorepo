@@ -1,11 +1,10 @@
-import { useState } from "react";
+import { isValidElement, useState } from "react";
 import {
   signInWithPopup,
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signInWithEmailLink,
-  confirmPasswordReset,
   sendPasswordResetEmail,
   sendSignInLinkToEmail,
 } from "firebase/auth";
@@ -34,6 +33,11 @@ export interface SignInError {
     | "login_with_apple"
     | "forgot_password";
   message: string;
+}
+
+export function isEmailStringValid(email: string) {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
 }
 
 export function useFirebaseLogin(authenticateCallback?: (arg: string) => void) {
@@ -160,79 +164,61 @@ export function useFirebaseLogin(authenticateCallback?: (arg: string) => void) {
     }
   };
 
-  const confirmPasswordResetHandler = async ({
-    password,
-    obCode,
-    callback,
-  }: {
-    password: string;
-    obCode: string;
-    callback: () => void;
-  }) => {
-    try {
-      await confirmPasswordReset(FirebaseAuthInstance, obCode, password);
-      //  if the execution reaches here then its successful
-      callback();
-    } catch (error) {
-      const code = error?.code;
-      setSignInErrorState({
-        isError: true,
-        type: "forgot_password",
-        message: ERROR_CODE_MAP[code] || "Something went wrong",
-      });
-      console.error("Forgot password reset error:", error);
-    }
-  };
-
   const handleMagicLink = async ({ email }: { email: string }) => {
-    setIsMagicLinkSendLoading(true);
-    try {
-      await sendSignInLinkToEmail(FirebaseAuthInstance, email, {
-        url: `${window.location.origin}/magic_link`,
-        handleCodeInApp: true,
-      });
-      window.localStorage.setItem("emailForSignIn", email);
-      setIsMagicLinkSent(true);
-    } catch (error) {
-      console.log("ERROR", error?.code);
-      const code = error?.code;
+    const isEmailValid = isEmailStringValid(email);
+    if (!isEmailValid) {
       setSignInErrorState({
         isError: true,
         type: "magic_link",
-        message: ERROR_CODE_MAP[code] || "Something went wrong",
+        message: "Enter a valid email address",
       });
+    } else {
+      setIsMagicLinkSendLoading(true);
+      try {
+        await sendSignInLinkToEmail(FirebaseAuthInstance, email, {
+          url: `${window.location.origin}/magic_link`,
+          handleCodeInApp: true,
+        });
+        window.localStorage.setItem("emailForSignIn", email);
+        setIsMagicLinkSent(true);
+      } catch (error) {
+        console.log("ERROR", error?.code);
+        const code = error?.code;
+        setSignInErrorState({
+          isError: true,
+          type: "magic_link",
+          message: ERROR_CODE_MAP[code] || "Something went wrong",
+        });
+      }
+      setIsMagicLinkSendLoading(false);
     }
-    setIsMagicLinkSendLoading(false);
   };
 
   const handleForgotPasswordLink = async ({ email }: { email: string }) => {
-    setIsForgotPasswordSendEmailLoading(true);
-    try {
-      await sendPasswordResetEmail(FirebaseAuthInstance, email, {
-        url: window.location.href,
-      });
-      setIsForgotPasswordEmailSent(true);
-    } catch (error) {
-      const code = error?.code;
+    const isEmailValid = isEmailStringValid(email);
+    if (!isEmailValid) {
       setSignInErrorState({
         isError: true,
         type: "forgot_password",
-        message: ERROR_CODE_MAP[code] || "Something went wrong",
+        message: "Enter a valid email address",
       });
+    } else {
+      setIsForgotPasswordSendEmailLoading(true);
+      try {
+        await sendPasswordResetEmail(FirebaseAuthInstance, email, {
+          url: window.location.href,
+        });
+        setIsForgotPasswordEmailSent(true);
+      } catch (error) {
+        const code = error?.code;
+        setSignInErrorState({
+          isError: true,
+          type: "forgot_password",
+          message: ERROR_CODE_MAP[code] || "Something went wrong",
+        });
+      }
+      setIsForgotPasswordSendEmailLoading(false);
     }
-    setIsForgotPasswordSendEmailLoading(false);
-  };
-
-  const handlePasswordReset = ({
-    password,
-    obCode,
-    callback,
-  }: {
-    password: string;
-    obCode: string;
-    callback: () => void;
-  }) => {
-    confirmPasswordResetHandler({ password, obCode, callback });
   };
 
   const handleGoogleLogin = () => {
@@ -242,11 +228,28 @@ export function useFirebaseLogin(authenticateCallback?: (arg: string) => void) {
   const handleCreateUserWithEmailPassword = ({
     email,
     password,
+    password2,
   }: {
     email: string;
     password: string;
+    password2: string;
   }) => {
-    signUpWithEmailPassword({ email, password });
+    const isEmailValid = isEmailStringValid(email);
+    if (!isEmailValid) {
+      setSignInErrorState({
+        isError: true,
+        type: "email_password_signup",
+        message: "Enter a valid email address",
+      });
+    } else if (password !== password2) {
+      setSignInErrorState({
+        isError: true,
+        type: "email_password_signup",
+        message: "Passwords do not match",
+      });
+    } else {
+      signUpWithEmailPassword({ email, password });
+    }
   };
 
   const handleSignInWithEmailPassword = ({
@@ -256,7 +259,16 @@ export function useFirebaseLogin(authenticateCallback?: (arg: string) => void) {
     email: string;
     password: string;
   }) => {
-    signInWithEmailPassword({ email, password });
+    const isEmailValid = isEmailStringValid(email);
+    if (!isEmailValid) {
+      setSignInErrorState({
+        isError: true,
+        type: "email_password_login",
+        message: "Enter a valid email address",
+      });
+    } else {
+      signInWithEmailPassword({ email, password });
+    }
   };
 
   return {
@@ -266,7 +278,6 @@ export function useFirebaseLogin(authenticateCallback?: (arg: string) => void) {
     handleCreateUserWithEmailPassword,
     signInWithMagicLinkHandler,
     handleForgotPasswordLink,
-    handlePasswordReset,
     signInErrorState,
     resetErrorState,
     isMagicLinkSent,

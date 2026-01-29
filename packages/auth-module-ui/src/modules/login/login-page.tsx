@@ -134,6 +134,7 @@ function LoginPage(): JSX.Element {
       handleCreateUserWithEmailPassword({
         email,
         password,
+        password2,
       });
     } else if (screenState === "forgot_password") {
       handleForgotPasswordLink({ email });
