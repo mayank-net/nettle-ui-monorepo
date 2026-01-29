@@ -241,6 +241,12 @@ export function useFirebaseLogin(authenticateCallback?: (arg: string) => void) {
         type: "email_password_signup",
         message: "Enter a valid email address",
       });
+    } else if (!password || !password2) {
+      setSignInErrorState({
+        isError: true,
+        type: "email_password_signup",
+        message: "Please enter your password",
+      });
     } else if (password !== password2) {
       setSignInErrorState({
         isError: true,
@@ -265,6 +271,12 @@ export function useFirebaseLogin(authenticateCallback?: (arg: string) => void) {
         isError: true,
         type: "email_password_login",
         message: "Enter a valid email address",
+      });
+    } else if (!password) {
+      setSignInErrorState({
+        isError: true,
+        type: "email_password_login",
+        message: "Please enter your password",
       });
     } else {
       signInWithEmailPassword({ email, password });
